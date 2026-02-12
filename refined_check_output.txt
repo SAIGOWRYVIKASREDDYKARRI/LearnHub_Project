@@ -1,0 +1,10 @@
+1. Logging in as Admin...
+Admin login successful.
+
+2. Logging in as Teacher...
+Teacher created and deleted a course.
+
+3. Fetching Activity Logs...
+Fetched 13 logs.
+SUCCESS: No admin logs found.
+SUCCESS: Found DELETE_COURSE log.

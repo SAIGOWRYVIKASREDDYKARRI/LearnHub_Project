@@ -1,0 +1,13 @@
+1. Logging in as Teacher to generate log...
+Teacher login successful.
+
+2. Logging in as Admin to fetch logs...
+Admin login successful.
+
+3. Fetching Activity Logs...
+Fetched 10 logs.
+Log 0: [LOGIN] Admin One (admin) - User logged in at 2026-02-12T07:28:34.138Z
+Log 1: [LOGIN] Teacher One (teacher) - User logged in at 2026-02-12T07:28:33.950Z
+Log 2: [CREATE_COURSE] Teacher One (teacher) - Created course: Test Course 1770879926525 at 2026-02-12T07:05:26.602Z
+Log 3: [LOGIN] Teacher One (teacher) - User logged in at 2026-02-12T07:05:26.473Z
+Log 4: [LOGIN] Teacher One (teacher) - User logged in at 2026-02-12T07:00:25.534Z

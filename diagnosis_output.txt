@@ -1,0 +1,17 @@
+1. Logging in as Teacher...
+Teacher Login response data: {
+  "_id": "698305b35e1a9c9c48c7fb3f",
+  "name": "Teacher One",
+  "email": "teacher@gmail.com",
+  "role": "teacher",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODMwNWIzNWUxYTljOWM0OGM3ZmIzZiIsImlhdCI6MTc3MDg3ODUyNiwiZXhwIjoxNzczNDcwNTI2fQ.xVvWeJnhtaWrUtSLQ0N0LBUm6JcmWWKe8VzsggRGdcs"
+}
+
+2. Logging in as Admin...
+Admin Login response data: {
+  "_id": "69830b5f5e1a9c9c48c7fb46",
+  "name": "Admin One",
+  "email": "admin@gmail.com",
+  "role": "admin",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODMwYjVmNWUxYTljOWM0OGM3ZmI0NiIsImlhdCI6MTc3MDg3ODUyNiwiZXhwIjoxNzczNDcwNTI2fQ.mY1GzdPQjkHA-AX-jcVc9DmCHt8WDlF5VBcIThFMKis"
+}
