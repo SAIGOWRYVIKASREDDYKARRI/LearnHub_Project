@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import AdminDashboard from './AdminDashboard';
 import TeacherDashboard from './TeacherDashboard';
 import StudentDashboard from './StudentDashboard';
+import DebugDashboard from './DebugDashboard';
+import ErrorBoundary from '../components/ErrorBoundary';
 import { Button } from 'react-bootstrap';
 
 const Dashboard = () => {
@@ -16,7 +18,12 @@ const Dashboard = () => {
             </div>
 
             {user.role === 'admin' && <AdminDashboard />}
-            {user.role === 'teacher' && <TeacherDashboard />}
+            {user.role === 'teacher' && (
+                <ErrorBoundary>
+                    <TeacherDashboard />
+                </ErrorBoundary>
+            )}
+            {/* {user.role === 'teacher' && <DebugDashboard />} */}
             {user.role === 'student' && <StudentDashboard />}
         </div>
     );

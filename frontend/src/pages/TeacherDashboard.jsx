@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form } from 'react-bootstrap';
+import { Button, Table, Modal, Form, Pagination } from 'react-bootstrap';
 import api from '../utils/api';
 
 const TeacherDashboard = () => {
@@ -9,14 +9,18 @@ const TeacherDashboard = () => {
     const [currentCourseId, setCurrentCourseId] = useState(null);
     const [newCourse, setNewCourse] = useState({ title: '', description: '', category: '', price: 0 });
 
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
     useEffect(() => {
         fetchCourses();
     }, []);
 
     const fetchCourses = async () => {
         try {
-            // In a real app, we'd filter by educator ID on the backend or here
-            const { data } = await api.get('/courses');
+            // Fetch courses created by the logged-in teacher
+            const { data } = await api.get('/courses/my');
             if (Array.isArray(data)) {
                 setCourses(data);
             } else {
@@ -83,6 +87,20 @@ const TeacherDashboard = () => {
         setNewCourse({ title: '', description: '', category: '', price: 0 });
     };
 
+    // Pagination Logic
+
+    if (!Array.isArray(courses)) {
+        console.error('Courses is not an array:', courses);
+        return <div className="text-danger">Error: Courses data is corrupted. Check console.</div>;
+    }
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentCourses = courses.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(courses.length / itemsPerPage);
+
+    const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <div>
             <div className="d-flex justify-content-between mb-3">
@@ -101,20 +119,43 @@ const TeacherDashboard = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {courses.map(course => (
-                        <tr key={course._id}>
-                            <td>{course.title || course.C_title}</td>
-                            <td>{course.category || course.C_categories}</td>
-                            <td>${course.price !== undefined ? course.price : (course.C_price !== undefined ? course.C_price : 0)}</td>
-                            <td>{course.enrolledCount || course.enrolled || 0}</td>
-                            <td>
-                                <Button variant="info" size="sm" className="me-2" onClick={() => handleEditClick(course)}>Edit</Button>
-                                <Button variant="danger" size="sm" onClick={() => handleDeleteCourse(course._id)}>Delete</Button>
-                            </td>
-                        </tr>
-                    ))}
+                    {currentCourses.map(course => {
+                        if (!course) return null;
+                        return (
+                            <tr key={course._id}>
+                                <td>{course.title || course.C_title}</td>
+                                <td>{course.category || course.C_categories}</td>
+                                <td>${course.price !== undefined ? course.price : (course.C_price !== undefined ? course.C_price : 0)}</td>
+                                <td>{course.enrolledCount || course.enrolled || 0}</td>
+                                <td>
+                                    <Button variant="info" size="sm" className="me-2" onClick={() => handleEditClick(course)}>Edit</Button>
+                                    <Button variant="danger" size="sm" onClick={() => handleDeleteCourse(course._id)}>Delete</Button>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </Table>
+
+            {totalPages > 1 && (
+                <div className="d-flex justify-content-center">
+                    <Pagination>
+                        <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
+                        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+                        {[...Array(totalPages)].map((_, index) => (
+                            <Pagination.Item
+                                key={index + 1}
+                                active={index + 1 === currentPage}
+                                onClick={() => handlePageChange(index + 1)}
+                            >
+                                {index + 1}
+                            </Pagination.Item>
+                        ))}
+                        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+                        <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
+                    </Pagination>
+                </div>
+            )}
 
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>

@@ -15,7 +15,15 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: '*', // Allow all origins for debugging
+    credentials: true
+}));
+
+// Basic root route for liveness check
+app.get('/', (req, res) => {
+    res.json({ message: 'Backend is running!', timestamp: new Date() });
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes

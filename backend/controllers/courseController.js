@@ -217,6 +217,18 @@ const getEnrolledCourses = async (req, res) => {
     }
 };
 
+// @desc    Get courses created by current teacher
+// @route   GET /api/courses/my
+// @access  Private/Teacher
+const getMyCourses = async (req, res) => {
+    try {
+        const courses = await Course.find({ educator: req.user._id });
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getCourses,
     getCourseById,
@@ -225,5 +237,6 @@ module.exports = {
     deleteCourse,
     addSection,
     enrollCourse,
-    getEnrolledCourses
+    getEnrolledCourses,
+    getMyCourses
 };

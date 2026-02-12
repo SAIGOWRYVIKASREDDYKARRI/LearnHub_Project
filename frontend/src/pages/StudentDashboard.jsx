@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Row, Col, Tabs, Tab, Alert, ProgressBar } from 'react-bootstrap';
+import { Card, Button, Row, Col, Tabs, Tab, Alert, ProgressBar, Pagination } from 'react-bootstrap';
 import api from '../utils/api';
 
 const StudentDashboard = () => {
     const [courses, setCourses] = useState([]);
     const [enrolledCourses, setEnrolledCourses] = useState([]);
     const [message, setMessage] = useState('');
+
+    // Pagination State
+    const [browsePage, setBrowsePage] = useState(1);
+    const [learningPage, setLearningPage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
         fetchCourses();
@@ -55,6 +60,17 @@ const StudentDashboard = () => {
         alert(`Downloading Certificate for ${courseTitle}...\n(In a real app, this would generate a PDF)`);
     };
 
+    // Calculate pagination slices
+    const indexLastBrowse = browsePage * itemsPerPage;
+    const indexFirstBrowse = indexLastBrowse - itemsPerPage;
+    const currentBrowseCourses = courses.slice(indexFirstBrowse, indexLastBrowse);
+    const totalBrowsePages = Math.ceil(courses.length / itemsPerPage);
+
+    const indexLastLearning = learningPage * itemsPerPage;
+    const indexFirstLearning = indexLastLearning - itemsPerPage;
+    const currentLearningCourses = enrolledCourses.slice(indexFirstLearning, indexLastLearning);
+    const totalLearningPages = Math.ceil(enrolledCourses.length / itemsPerPage);
+
     return (
         <div>
             <h3>Student Dashboard</h3>
@@ -63,7 +79,7 @@ const StudentDashboard = () => {
             <Tabs defaultActiveKey="browse" className="mb-3">
                 <Tab eventKey="browse" title="Browse Courses">
                     <Row xs={1} md={3} className="g-4">
-                        {courses.map(course => {
+                        {currentBrowseCourses.map(course => {
                             const isEnrolled = enrolledCourses.some(e => e.course && e.course._id === course._id);
                             if (!course) return null;
                             return (
@@ -89,11 +105,30 @@ const StudentDashboard = () => {
                             );
                         })}
                     </Row>
+                    {totalBrowsePages > 1 && (
+                        <div className="d-flex justify-content-center mt-4">
+                            <Pagination>
+                                <Pagination.First onClick={() => setBrowsePage(1)} disabled={browsePage === 1} />
+                                <Pagination.Prev onClick={() => setBrowsePage(browsePage - 1)} disabled={browsePage === 1} />
+                                {[...Array(totalBrowsePages)].map((_, index) => (
+                                    <Pagination.Item
+                                        key={index + 1}
+                                        active={index + 1 === browsePage}
+                                        onClick={() => setBrowsePage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </Pagination.Item>
+                                ))}
+                                <Pagination.Next onClick={() => setBrowsePage(browsePage + 1)} disabled={browsePage === totalBrowsePages} />
+                                <Pagination.Last onClick={() => setBrowsePage(totalBrowsePages)} disabled={browsePage === totalBrowsePages} />
+                            </Pagination>
+                        </div>
+                    )}
                 </Tab>
                 <Tab eventKey="my-courses" title="My Learning">
                     {enrolledCourses.length === 0 && <p>You haven't enrolled in any courses yet.</p>}
                     <Row xs={1} md={2} className="g-4">
-                        {enrolledCourses.map(enrollment => (
+                        {currentLearningCourses.map(enrollment => (
                             <Col key={enrollment._id}>
                                 <Card>
                                     <Card.Body>
@@ -112,6 +147,25 @@ const StudentDashboard = () => {
                             </Col>
                         ))}
                     </Row>
+                    {totalLearningPages > 1 && (
+                        <div className="d-flex justify-content-center mt-4">
+                            <Pagination>
+                                <Pagination.First onClick={() => setLearningPage(1)} disabled={learningPage === 1} />
+                                <Pagination.Prev onClick={() => setLearningPage(learningPage - 1)} disabled={learningPage === 1} />
+                                {[...Array(totalLearningPages)].map((_, index) => (
+                                    <Pagination.Item
+                                        key={index + 1}
+                                        active={index + 1 === learningPage}
+                                        onClick={() => setLearningPage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </Pagination.Item>
+                                ))}
+                                <Pagination.Next onClick={() => setLearningPage(learningPage + 1)} disabled={learningPage === totalLearningPages} />
+                                <Pagination.Last onClick={() => setLearningPage(totalLearningPages)} disabled={learningPage === totalLearningPages} />
+                            </Pagination>
+                        </div>
+                    )}
                 </Tab>
             </Tabs>
         </div>

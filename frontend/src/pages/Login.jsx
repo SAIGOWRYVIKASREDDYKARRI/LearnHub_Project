@@ -47,6 +47,9 @@ const Login = () => {
                         required
                     />
                 </Form.Group>
+                <div className="d-flex justify-content-end mb-3">
+                    <Link to="/forgot-password">Forgot Password?</Link>
+                </div>
                 <Button variant="primary" type="submit" className="w-100">
                     Login
                 </Button>
