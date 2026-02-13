@@ -102,44 +102,56 @@ const TeacherDashboard = () => {
     const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
-        <div>
-            <div className="d-flex justify-content-between mb-3">
-                <h3>My Courses</h3>
-                <Button onClick={handleCreateClick}>Create Course</Button>
+        <div className="py-4 animate-fade-in">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3 className="dashboard-header m-0">My Courses</h3>
+                <Button onClick={handleCreateClick} className="custom-btn shadow-sm">
+                    <i className="bi bi-plus-lg me-2"></i>Create New Course
+                </Button>
             </div>
 
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Enrolled</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentCourses.map(course => {
-                        if (!course) return null;
-                        return (
-                            <tr key={course._id}>
-                                <td>{course.title || course.C_title}</td>
-                                <td>{course.category || course.C_categories}</td>
-                                <td>${course.price !== undefined ? course.price : (course.C_price !== undefined ? course.C_price : 0)}</td>
-                                <td>{course.enrolledCount || course.enrolled || 0}</td>
-                                <td>
-                                    <Button variant="info" size="sm" className="me-2" onClick={() => handleEditClick(course)}>Edit</Button>
-                                    <Button variant="danger" size="sm" onClick={() => handleDeleteCourse(course._id)}>Delete</Button>
+            <div className="glass-card p-0 overflow-hidden">
+                <Table hover responsive className="glass-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Enrolled</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentCourses.length > 0 ? (
+                            currentCourses.map(course => {
+                                if (!course) return null;
+                                return (
+                                    <tr key={course._id}>
+                                        <td className="fw-semibold">{course.title || course.C_title}</td>
+                                        <td><span className="badge bg-light text-secondary border">{course.category || course.C_categories}</span></td>
+                                        <td className="fw-bold text-success">${course.price !== undefined ? course.price : (course.C_price !== undefined ? course.C_price : 0)}</td>
+                                        <td>{course.enrolledCount || course.enrolled || 0} Students</td>
+                                        <td>
+                                            <Button variant="outline-info" size="sm" className="me-2 rounded-pill px-3" onClick={() => handleEditClick(course)}>Edit</Button>
+                                            <Button variant="outline-danger" size="sm" className="rounded-pill px-3" onClick={() => handleDeleteCourse(course._id)}>Delete</Button>
+                                        </td>
+                                    </tr>
+                                );
+                            })
+                        ) : (
+                            <tr>
+                                <td colSpan="5" className="text-center py-5 text-muted">
+                                    No courses found. Start by creating one!
                                 </td>
                             </tr>
-                        );
-                    })}
-                </tbody>
-            </Table>
+                        )}
+                    </tbody>
+                </Table>
+            </div>
 
             {totalPages > 1 && (
-                <div className="d-flex justify-content-center">
-                    <Pagination>
+                <div className="d-flex justify-content-center mt-4">
+                    <Pagination className="custom-pagination">
                         <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
                         <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
                         {[...Array(totalPages)].map((_, index) => (
@@ -157,50 +169,58 @@ const TeacherDashboard = () => {
                 </div>
             )}
 
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{isEditing ? 'Edit Course' : 'Create Course'}</Modal.Title>
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered contentClassName="glass-card border-0">
+                <Modal.Header closeButton className="border-bottom-0">
+                    <Modal.Title className="fw-bold">{isEditing ? 'Edit Course' : 'Create Course'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label>Title</Form.Label>
+                            <Form.Label className="fw-semibold">Title</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={newCourse.title}
                                 onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
+                                className="custom-input"
+                                placeholder="e.g. Advanced React Patterns"
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label className="fw-semibold">Description</Form.Label>
                             <Form.Control
                                 as="textarea"
+                                rows={3}
                                 value={newCourse.description}
                                 onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })}
+                                className="custom-input"
+                                placeholder="Course details..."
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Category</Form.Label>
+                            <Form.Label className="fw-semibold">Category</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={newCourse.category}
                                 onChange={(e) => setNewCourse({ ...newCourse, category: e.target.value })}
+                                className="custom-input"
+                                placeholder="e.g. Web Development"
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Price</Form.Label>
+                            <Form.Label className="fw-semibold">Price ($)</Form.Label>
                             <Form.Control
                                 type="number"
                                 value={newCourse.price}
                                 onChange={(e) => setNewCourse({ ...newCourse, price: e.target.value })}
+                                className="custom-input"
                             />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
-                    <Button variant="primary" onClick={isEditing ? handleUpdateCourse : handleCreateCourse}>
-                        {isEditing ? 'Update' : 'Create'}
+                <Modal.Footer className="border-top-0">
+                    <Button variant="light" onClick={() => setShowModal(false)} className="rounded-pill px-4">Cancel</Button>
+                    <Button variant="primary" onClick={isEditing ? handleUpdateCourse : handleCreateCourse} className="custom-btn rounded-pill px-4">
+                        {isEditing ? 'Update Course' : 'Create Course'}
                     </Button>
                 </Modal.Footer>
             </Modal>

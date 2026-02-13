@@ -72,11 +72,11 @@ const StudentDashboard = () => {
     const totalLearningPages = Math.ceil(enrolledCourses.length / itemsPerPage);
 
     return (
-        <div>
-            <h3>Student Dashboard</h3>
-            {message && <Alert variant="info">{message}</Alert>}
+        <div className="py-4 animate-fade-in">
+            <h3 className="dashboard-header mb-4">Student Dashboard</h3>
+            {message && <Alert variant="info" className="glass-card mb-4 border-0">{message}</Alert>}
 
-            <Tabs defaultActiveKey="browse" className="mb-3">
+            <Tabs defaultActiveKey="browse" className="mb-4 custom-tabs">
                 <Tab eventKey="browse" title="Browse Courses">
                     <Row xs={1} md={3} className="g-4">
                         {currentBrowseCourses.map(course => {
@@ -84,19 +84,19 @@ const StudentDashboard = () => {
                             if (!course) return null;
                             return (
                                 <Col key={course._id}>
-                                    <Card>
-                                        <Card.Body>
-                                            <Card.Title>{course.title || course.C_title || 'Untitled'}</Card.Title>
-                                            <Card.Subtitle className="mb-2 text-muted">{course.category || course.C_categories || 'Uncategorized'}</Card.Subtitle>
-                                            <Card.Text>
+                                    <Card className="course-card h-100">
+                                        <Card.Body className="d-flex flex-column">
+                                            <Card.Title className="fw-bold">{course.title || course.C_title || 'Untitled'}</Card.Title>
+                                            <Card.Subtitle className="mb-3 text-muted">{course.category || course.C_categories || 'Uncategorized'}</Card.Subtitle>
+                                            <Card.Text className="flex-grow-1 text-secondary">
                                                 {(course.description || course.C_description || '').substring(0, 100)}...
                                             </Card.Text>
-                                            <div className="d-flex justify-content-between align-items-center">
-                                                <span className="fw-bold">${course.price !== undefined ? course.price : (course.C_price !== undefined ? course.C_price : 0)}</span>
+                                            <div className="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                                <span className="fw-bold fs-5 text-primary">${course.price !== undefined ? course.price : (course.C_price !== undefined ? course.C_price : 0)}</span>
                                                 {isEnrolled ? (
-                                                    <Button variant="success" disabled>Enrolled</Button>
+                                                    <Button variant="success" size="sm" className="rounded-pill px-3" disabled>Enrolled</Button>
                                                 ) : (
-                                                    <Button variant="primary" onClick={() => handleEnroll(course._id)}>Enroll</Button>
+                                                    <Button variant="primary" size="sm" className="custom-btn rounded-pill px-3" onClick={() => handleEnroll(course._id)}>Enroll Now</Button>
                                                 )}
                                             </div>
                                         </Card.Body>
@@ -106,8 +106,8 @@ const StudentDashboard = () => {
                         })}
                     </Row>
                     {totalBrowsePages > 1 && (
-                        <div className="d-flex justify-content-center mt-4">
-                            <Pagination>
+                        <div className="d-flex justify-content-center mt-5">
+                            <Pagination className="custom-pagination">
                                 <Pagination.First onClick={() => setBrowsePage(1)} disabled={browsePage === 1} />
                                 <Pagination.Prev onClick={() => setBrowsePage(browsePage - 1)} disabled={browsePage === 1} />
                                 {[...Array(totalBrowsePages)].map((_, index) => (
@@ -126,21 +126,29 @@ const StudentDashboard = () => {
                     )}
                 </Tab>
                 <Tab eventKey="my-courses" title="My Learning">
-                    {enrolledCourses.length === 0 && <p>You haven't enrolled in any courses yet.</p>}
+                    {enrolledCourses.length === 0 && (
+                        <div className="text-center p-5 glass-card">
+                            <p className="fs-5 text-muted">You haven't enrolled in any courses yet.</p>
+                            <Button variant="primary" className="custom-btn" onClick={() => document.querySelector('[data-rr-ui-event-key="browse"]').click()}>Browse Courses</Button>
+                        </div>
+                    )}
                     <Row xs={1} md={2} className="g-4">
                         {currentLearningCourses.map(enrollment => (
                             <Col key={enrollment._id}>
-                                <Card>
+                                <Card className="course-card h-100 border-0 shadow-sm">
                                     <Card.Body>
-                                        <Card.Title>{enrollment.course?.title || enrollment.course?.C_title || 'Untitled Course'}</Card.Title>
-                                        <Card.Text>
+                                        <Card.Title className="fw-bold">{enrollment.course?.title || enrollment.course?.C_title || 'Untitled Course'}</Card.Title>
+                                        <Card.Text className="text-muted small mb-2">
                                             Educator: {enrollment.course?.educator?.name || enrollment.course?.C_educator || 'Unknown'}
                                         </Card.Text>
-                                        <Card.Text>Status: In Progress</Card.Text>
-                                        <ProgressBar now={45} label={`${45}%`} className="mb-3" />
+                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <span className="badge bg-info bg-opacity-10 text-info border border-info">In Progress</span>
+                                            <span className="small text-muted">45% Complete</span>
+                                        </div>
+                                        <ProgressBar now={45} className="mb-3" style={{ height: '8px', borderRadius: '4px' }} variant="info" />
                                         <div className="d-flex gap-2">
-                                            <Button variant="primary" size="sm">Continue Learning</Button>
-                                            <Button variant="outline-success" size="sm" onClick={() => handleDownloadCertificate(enrollment.course.title)}>Certificate</Button>
+                                            <Button variant="primary" size="sm" className="custom-btn flex-grow-1">Continue</Button>
+                                            <Button variant="outline-success" size="sm" className="rounded-pill" onClick={() => handleDownloadCertificate(enrollment.course.title)}>Certificate</Button>
                                         </div>
                                     </Card.Body>
                                 </Card>
@@ -148,7 +156,7 @@ const StudentDashboard = () => {
                         ))}
                     </Row>
                     {totalLearningPages > 1 && (
-                        <div className="d-flex justify-content-center mt-4">
+                        <div className="d-flex justify-content-center mt-5">
                             <Pagination>
                                 <Pagination.First onClick={() => setLearningPage(1)} disabled={learningPage === 1} />
                                 <Pagination.Prev onClick={() => setLearningPage(learningPage - 1)} disabled={learningPage === 1} />

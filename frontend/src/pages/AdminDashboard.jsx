@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Spinner, Alert, Pagination } from 'react-bootstrap';
+import { Table, Spinner, Alert, Pagination, Button } from 'react-bootstrap';
 import api from '../utils/api';
 
 const AdminDashboard = () => {
@@ -25,6 +25,24 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleDownload = async () => {
+        try {
+            const response = await api.get('/activities/export', {
+                responseType: 'blob',
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'activity_logs.csv');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (error) {
+            console.error('Download failed', error);
+            setError('Failed to download logs');
+        }
+    };
+
     if (loading) return <Spinner animation="border" />;
     if (error) return <Alert variant="danger">{error}</Alert>;
 
@@ -37,48 +55,71 @@ const AdminDashboard = () => {
     const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
-        <div>
-            <h3>Admin Dashboard</h3>
-            <p>User Activity Logs</p>
+        <div className="py-4 animate-fade-in">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 className="dashboard-header m-0">Admin Dashboard</h3>
+                    <p className="text-muted m-0">Monitor system-wide user activity logs</p>
+                </div>
+                <Button onClick={handleDownload} variant="success" className="custom-btn shadow-sm">
+                    <i className="bi bi-download me-2"></i>Download Logs
+                </Button>
+            </div>
 
-            <Table striped bordered hover responsive>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>User</th>
-                        <th>Role</th>
-                        <th>Action</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentActivities.map(log => (
-                        <tr key={log._id}>
-                            <td>{new Date(log.createdAt).toLocaleString()}</td>
-                            <td>{log.user ? log.user.name : 'Unknown'}</td>
-                            <td>{log.user ? log.user.role : 'N/A'}</td>
-                            <td>{log.action}</td>
-                            <td>{log.details}</td>
+            <div className="glass-card p-0 overflow-hidden shadow-lg">
+                <Table hover responsive className="glass-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Details</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {currentActivities.length > 0 ? (
+                            currentActivities.map(log => (
+                                <tr key={log._id}>
+                                    <td className="text-secondary small">{new Date(log.createdAt).toLocaleString()}</td>
+                                    <td className="fw-bold">{log.user ? log.user.name : <span className="text-muted fst-italic">Unknown</span>}</td>
+                                    <td>
+                                        <span className={`badge ${log.user?.role === 'admin' ? 'bg-danger' : log.user?.role === 'teacher' ? 'bg-info' : 'bg-success'} bg-opacity-75`}>
+                                            {log.user ? log.user.role : 'N/A'}
+                                        </span>
+                                    </td>
+                                    <td className="fw-semibold text-dark">{log.action}</td>
+                                    <td className="text-muted small">{log.details}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" className="text-center py-5 text-muted">No activity logs found.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </Table>
+            </div>
 
-            <Pagination className="justify-content-center">
-                <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
-                <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
-                {[...Array(totalPages)].map((_, index) => (
-                    <Pagination.Item
-                        key={index + 1}
-                        active={index + 1 === currentPage}
-                        onClick={() => handlePageChange(index + 1)}
-                    >
-                        {index + 1}
-                    </Pagination.Item>
-                ))}
-                <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
-                <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
-            </Pagination>
+            {totalPages > 1 && (
+                <div className="d-flex justify-content-center mt-4">
+                    <Pagination className="custom-pagination">
+                        <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
+                        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+                        {[...Array(totalPages)].map((_, index) => (
+                            <Pagination.Item
+                                key={index + 1}
+                                active={index + 1 === currentPage}
+                                onClick={() => handlePageChange(index + 1)}
+                            >
+                                {index + 1}
+                            </Pagination.Item>
+                        ))}
+                        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+                        <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
+                    </Pagination>
+                </div>
+            )}
         </div>
     );
 };

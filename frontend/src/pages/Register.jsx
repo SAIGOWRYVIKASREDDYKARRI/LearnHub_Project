@@ -24,59 +24,68 @@ const Register = () => {
     };
 
     return (
-        <Container className="mt-5" style={{ maxWidth: '500px' }}>
-            <h2>Register</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="formBasicName">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Enter name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+        <div className="d-flex align-items-center justify-content-center min-vh-100 w-100">
+            <Container className="glass-card animate-slide-in" style={{ maxWidth: '500px' }}>
+                <h2 className="text-center mb-4 fw-bold dashboard-header">Join LearnHub</h2>
+                {error && <Alert variant="danger">{error}</Alert>}
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3" controlId="formBasicName">
+                        <Form.Label className="fw-semibold">Name</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            className="custom-input"
+                        />
+                    </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control
-                        type="email"
-                        placeholder="Enter email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label className="fw-semibold">Email address</Form.Label>
+                        <Form.Control
+                            type="email"
+                            placeholder="Enter email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="custom-input"
+                        />
+                    </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label className="fw-semibold">Password</Form.Label>
+                        <Form.Control
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="custom-input"
+                        />
+                    </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formRole">
-                    <Form.Label>Role</Form.Label>
-                    <Form.Select value={role} onChange={(e) => setRole(e.target.value)}>
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                    </Form.Select>
-                </Form.Group>
+                    <Form.Group className="mb-4" controlId="formRole">
+                        <Form.Label className="fw-semibold">Role</Form.Label>
+                        <Form.Select
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            className="custom-input"
+                        >
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </Form.Select>
+                    </Form.Group>
 
-                <Button variant="primary" type="submit" className="w-100">
-                    Register
-                </Button>
-            </Form>
-            <div className="mt-3 text-center">
-                Already have an account? <Link to="/login">Login here</Link>
-            </div>
-        </Container>
+                    <Button variant="primary" type="submit" className="w-100 custom-btn fw-bold">
+                        Register
+                    </Button>
+                </Form>
+                <div className="mt-4 text-center text-muted">
+                    Already have an account? <Link to="/login" style={{ color: 'var(--secondary-color)', fontWeight: 'bold' }}>Login here</Link>
+                </div>
+            </Container>
+        </div>
     );
 };
 
